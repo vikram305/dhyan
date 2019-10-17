@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimary">#032A51</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#546889</color>
+
+
+    <color name="mtrl_textinput_default_box_stroke_color">#000</color>
+    <color name="recyclerViewBackgroundColor">#B1B0B0</color>
 </resources>

@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Dhyan</string>
+    <string name="logout">Log Out</string>
+
+    <string name="profile">Profile</string>
+    <string name="posts">Posts</string>
+    <string name="dhyan">Dhyan</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="machine">Machine</string>
+    <string name="entries">Entries</string>
+    <string name="chart">Chart</string>
+    <string name="system">System</string>
+    <string name="select_machine">Select Machine</string>
+    <string name="select_date">Select Date</string>
+    <string name="contact_us">Contact Us</string>
 </resources>

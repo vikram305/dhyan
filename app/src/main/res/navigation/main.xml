@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
+        app:startDestination="@+id/dashboardScreen">
+
+
+    <fragment
+            android:id="@+id/dashboardScreen"
+            android:name="projects.vikky.com.dhyan.ui.main.dashboard.DashboardFragment"
+            android:label="Dashboard"
+            tools:layout="@layout/fragment_dashboard">
+
+    </fragment>
+
+    <fragment
+            android:id="@+id/profileScreen"
+            android:name="projects.vikky.com.dhyan.ui.main.profile.ProfileFragment"
+            android:label="@string/profile"
+            tools:layout="@layout/fragment_profile">
+
+
+    </fragment>
+    <fragment
+            android:id="@+id/postScreen"
+            android:name="projects.vikky.com.dhyan.ui.main.posts.PostsFragment"
+            android:label="@string/posts"
+            tools:layout="@layout/fragment_post">
+
+    </fragment>
+    <fragment
+            android:id="@+id/machineFragment"
+            android:name="projects.vikky.com.dhyan.ui.main.machine.MachineFragment"
+            android:label="Machine"
+            tools:layout="@layout/fragment_machine" />
+
+    <fragment
+            android:id="@+id/entriesFragment"
+            android:name="projects.vikky.com.dhyan.ui.main.entries.EntriesFragment"
+            android:label="Entries"
+            tools:layout="@layout/fragment_entries" />
+
+    <fragment
+            android:id="@+id/chartFragment"
+            android:name="projects.vikky.com.dhyan.ui.main.chart.ChartFragment"
+            android:label="Chart"
+            tools:layout="@layout/fragment_entries">
+        <action
+                android:id="@+id/action_chartFragment_to_displayFragment"
+                app:destination="@id/displayChartFragment" />
+    </fragment>
+
+    <fragment
+            android:id="@+id/displayChartFragment"
+            android:name="projects.vikky.com.dhyan.ui.main.chart.DisplayChartFragment"
+            android:label="Chart"
+            tools:layout="@layout/fragment_display_chart">
+        <argument android:name="date" />
+        <argument android:name="machineId" />
+    </fragment>
+
 
 </navigation>

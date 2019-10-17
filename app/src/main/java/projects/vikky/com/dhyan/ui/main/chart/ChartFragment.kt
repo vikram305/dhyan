@@ -1,4 +1,4 @@
-package projects.vikky.com.dhyan.ui.main.entries
+package projects.vikky.com.dhyan.ui.main.chart
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -8,16 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.Navigation
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_entries.*
 import projects.vikky.com.dhyan.R
 import projects.vikky.com.dhyan.SessionManager
-import projects.vikky.com.dhyan.models.entry_list.EntryDM
 import projects.vikky.com.dhyan.models.machine_list.Machine
 import projects.vikky.com.dhyan.ui.main.Resource
 import projects.vikky.com.dhyan.viewmodels.ViewModelProviderFactory
@@ -26,33 +23,27 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.OnClickListener {
+class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.OnClickListener {
+    private val TAG: String = "ChartFragment"
 
-    private val TAG: String = "EntriesFragment"
-
-    private lateinit var viewModel: EntriesViewModel
+    private lateinit var viewModel: ChartViewModel
     private lateinit var progressBar: ProgressBar
     private lateinit var machineSpinner: Spinner
     //    private lateinit var datePicker: DatePicker
     private lateinit var datePickerEditText: EditText
     private lateinit var findButton: Button
+    private lateinit var emptyTextView: TextView
     private lateinit var selectedDate: String
     private var selectedMachineId: Int = -1
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var emptyTextView: TextView
-
     private var machineList: List<Machine> = ArrayList<Machine>()
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
     @Inject
     lateinit var sessionManager: SessionManager
 
-    @Inject
-    lateinit var entryRecyclerAdapter: EntryRecyclerAdapter
+    private lateinit var fragmentView: View
 
     val myCalander: Calendar = Calendar.getInstance()
-
-    private var entries: LiveData<Resource<List<EntryDM>>>? = null
 
 
     override fun onCreateView(
@@ -60,21 +51,23 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_entries, container, false)
+
+//        return inflater.inflate(R.layout.fragment_entries,container,false)
+        fragmentView = inflater.inflate(R.layout.fragment_entries, container, false)
+        return fragmentView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = view.findViewById(R.id.entryRecyclerView)
         progressBar = view.findViewById(R.id.entries_progress_bar)
         machineSpinner = view.findViewById(R.id.machineListSpinner)
-//        datePicker=view.findViewById(R.id.datePicker)
         datePickerEditText = view.findViewById(R.id.datePickerEditText)
         findButton = view.findViewById(R.id.findButton)
         emptyTextView = view.findViewById(R.id.emptyText)
         datePickerEditText.setText(SimpleDateFormat("MM/dd/yyyy").format(System.currentTimeMillis()))
         findButton.setOnClickListener(this)
+        findButton.isEnabled = false
 
         machineSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -109,66 +102,11 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
                 myCalander.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
-        viewModel = ViewModelProviders.of(this, providerFactory).get(EntriesViewModel::class.java)
-        entries = viewModel.getEntriesLiveData()
-        entries?.observe(viewLifecycleOwner, Observer {
-            subscribeEntryObserver(it)
-        })
+        viewModel = ViewModelProviders.of(this, providerFactory).get(ChartViewModel::class.java)
 
-//        datePicker.setOnDateChangedListener(this)
-        initRecyclerView()
         subscribeObserver()
-//        subscribeEntryObserver()
     }
 
-    private fun subscribeEntryObserver(it: Resource<List<EntryDM>>) {
-//        viewModel.observeEntryList(selectedMachineId,selectedDate)?.removeObservers(viewLifecycleOwner)
-//        viewModel.observeEntryList(selectedMachineId,selectedDate)?.observe(viewLifecycleOwner, Observer {
-        if (it != null) {
-            when (it.status) {
-                Resource.Status.LOADING -> {
-                    Log.d(TAG, "onChanged: Loading ")
-                    showList(false)
-                    showErrorText(false)
-                    showProgressbar(true)
-                }
-                Resource.Status.SUCCESS -> {
-                    Log.d(TAG, "onChanged: got entries ${it.data?.size}")
-                    showProgressbar(false)
-                    if (it.data!!.isEmpty()) {
-                        emptyTextView.text = "Machine list is empty"
-                        showErrorText(true)
-                        showList(false)
-//                            emptyTextView.visibility=View.VISIBLE
-//                            recyclerView.visibility=View.GONE
-
-                    } else {
-                        entryRecyclerAdapter.setPosts(it.data!!)
-                        showErrorText(false)
-                        showList(true)
-//                            emptyTextView.visibility=View.GONE
-//                            recyclerView.visibility=View.VISIBLE
-                    }
-
-//                        entryRecyclerAdapter.setPosts(it.data!!)
-                }
-                Resource.Status.ERROR -> {
-                    Log.d(TAG, "onChanged: Error:${it.message} ")
-                    emptyTextView.text = it.message
-
-                    showList(false)
-                    showErrorText(true)
-                    showProgressbar(false)
-                }
-                Resource.Status.NOT_AUTHENTICATED -> {
-//                        Toast.makeText(activity,"${it.message}",Toast.LENGTH_SHORT).show()
-                    showProgressbar(false)
-                    sessionManager.logout()
-                }
-            }
-        }
-//        })
-    }
 
     private fun subscribeObserver() {
         viewModel.observeMachineList()?.removeObservers(viewLifecycleOwner)
@@ -177,7 +115,6 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
                 when (it.status) {
                     Resource.Status.LOADING -> {
                         Log.d(TAG, "onChanged: Loading ")
-                        showList(false)
                         showErrorText(false)
                         showProgressbar(true)
                     }
@@ -185,30 +122,24 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
                         Log.d(TAG, "onChanged: got machines ${it.data?.size}")
                         showProgressbar(false)
                         if (it.data!!.isEmpty()) {
-                            emptyTextView.text = "Data Not Found"
+                            emptyTextView.text = "Data Not Found "
                             showErrorText(true)
-                            showList(false)
 //                            emptyTextView.visibility=View.VISIBLE
 //                            recyclerView.visibility=View.GONE
 
                         } else {
                             showErrorText(false)
-                            showList(false)
                             machineList = it.data!!
                             setSpinnerData()
 
 //                            emptyTextView.visibility=View.GONE
 //                            recyclerView.visibility=View.VISIBLE
                         }
-
-
-//                        machineRecyclerAdapter.setPosts(it.data!!)
                     }
                     Resource.Status.ERROR -> {
                         Log.d(TAG, "onChanged: Error:${it.message} ")
                         emptyTextView.text = it.message
 
-                        showList(false)
                         showErrorText(true)
                         showProgressbar(false)
                     }
@@ -220,6 +151,7 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
                 }
             }
         })
+
     }
 
     private fun setSpinnerData() {
@@ -241,8 +173,10 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
     private fun showProgressbar(isShowing: Boolean) {
         if (isShowing) {
             progressBar.visibility = View.VISIBLE
+            findButton.isEnabled = false
         } else {
             progressBar.visibility = View.GONE
+            findButton.isEnabled = true
         }
     }
 
@@ -254,37 +188,26 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
         }
     }
 
-    private fun showList(isShowing: Boolean) {
-        if (isShowing) {
-            recyclerView.visibility = View.VISIBLE
-        } else {
-            recyclerView.visibility = View.GONE
-        }
-    }
-
     override fun onDateChanged(p0: DatePicker?, year: Int, month: Int, day: Int) {
         selectedDate = "${month}/${day}/${year}"
         Log.d(TAG, "selected Data:${selectedDate}")
     }
 
-    private fun initRecyclerView() {
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = entryRecyclerAdapter
-    }
 
-    override fun onClick(view: View?) {
+    override fun onClick(v: View?) {
 
-        when (view?.id) {
+        when (v?.id) {
             R.id.findButton -> {
                 selectedDate = datePickerEditText.text.toString()
-                if (machineList.isEmpty()) {
-                    selectedMachineId = -1
-                } else {
-                    selectedMachineId = machineList[machineSpinner.selectedItemPosition].machineId!!
-                }
-
+                selectedMachineId = machineList[machineSpinner.selectedItemPosition].machineId!!
                 if (selectedMachineId != -1 && !TextUtils.isEmpty(selectedDate)) {
-                    viewModel.observeEntryList(selectedMachineId, selectedDate)
+//                    viewModel.observeEntryList(selectedMachineId,selectedDate)
+                    Log.d(TAG, "in button click")
+                    val bundle = Bundle()
+                    bundle.putString("date", selectedDate)
+                    bundle.putString("machineId", "${selectedMachineId}")
+                    Navigation.findNavController(fragmentView)
+                        .navigate(R.id.action_chartFragment_to_displayFragment, bundle)
                 }
             }
         }
