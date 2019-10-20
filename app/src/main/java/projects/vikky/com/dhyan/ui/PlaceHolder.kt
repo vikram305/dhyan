@@ -34,7 +34,7 @@ class PlaceHolder : DaggerAppCompatActivity() {
     }
 
     private fun scheduleSplashScreen() {
-        val splashScreenDuration = 150L
+        val splashScreenDuration = 1500L
         Handler().postDelayed(
             {
                 navigateTo()

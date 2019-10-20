@@ -1,8 +1,6 @@
 package projects.vikky.com.dhyan.ui.main
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.core.view.GravityCompat
@@ -60,11 +58,11 @@ class MainAcitvity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         navigationView.setNavigationItemSelectedListener(this)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflator: MenuInflater = menuInflater
-        inflator.inflate(R.menu.main_menu, menu)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        val inflator: MenuInflater = menuInflater
+//        inflator.inflate(R.menu.main_menu, menu)
+//        return true
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
@@ -88,6 +86,10 @@ class MainAcitvity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
+
+            R.id.nav_logout -> {
+                sessionManager.logout(loggingout = true)
+            }
             R.id.nav_dashboard -> {
                 var navOptions: NavOptions = NavOptions.Builder()
                     .setPopUpTo(R.id.main, true)

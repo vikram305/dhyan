@@ -34,7 +34,7 @@ class EntriesViewModel @Inject constructor(
         val source: LiveData<Resource<out List<Machine>>> = LiveDataReactiveStreams.fromPublisher(
             mainApi.getMachineList("Bearer ${sessionManager.getAuthUser().value!!.data!!.meta!!.token!!}")
                 .subscribeOn(Schedulers.io())
-                .delay(1500, TimeUnit.MILLISECONDS)
+                .delay(1000, TimeUnit.MILLISECONDS)
                 .onErrorReturn {
                     var machine = Machine()
                     Log.d(TAG, "apply: error ${it is UnknownHostException}")

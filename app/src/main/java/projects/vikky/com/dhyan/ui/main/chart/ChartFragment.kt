@@ -65,9 +65,12 @@ class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.O
         datePickerEditText = view.findViewById(R.id.datePickerEditText)
         findButton = view.findViewById(R.id.findButton)
         emptyTextView = view.findViewById(R.id.emptyText)
-        datePickerEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
-        Log.d(TAG, "data :${datePickerEditText.text} ");
-        selectedDate = SimpleDateFormat("MM/dd/yyyy").format(System.currentTimeMillis())
+        myCalander.time = Date(System.currentTimeMillis())
+//        datePickerEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+        datePickerEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(myCalander.time))
+        Log.d(TAG, "in start edit text data :${datePickerEditText.text} ");
+        selectedDate = SimpleDateFormat("MM/dd/yyyy").format(myCalander.time)
+        Log.d(TAG, "in start selected date data:${selectedDate} ")
 
         findButton.setOnClickListener(this)
         findButton.isEnabled = false
@@ -99,7 +102,8 @@ class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.O
                 val sdf = SimpleDateFormat(myFormat)
                 datePickerEditText.setText(ddf.format(myCalander.time))
                 selectedDate = sdf.format(myCalander.time)
-                Log.d(TAG, "data :${datePickerEditText.text} ");
+                Log.d(TAG, "in dialog edit text data :${datePickerEditText.text} ")
+                Log.d(TAG, "in dialog selected date data:${selectedDate} ")
             }
         datePickerEditText.setOnClickListener {
             DatePickerDialog(
@@ -113,6 +117,7 @@ class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.O
 
         subscribeObserver()
     }
+
 
 
     private fun subscribeObserver() {
@@ -205,9 +210,22 @@ class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.O
 
         when (v?.id) {
             R.id.findButton -> {
+
+
 //                selectedDate = datePickerEditText.text.toString()
                 selectedMachineId = machineList[machineSpinner.selectedItemPosition].machineId!!
                 if (selectedMachineId != -1 && !TextUtils.isEmpty(selectedDate)) {
+//                    datePickerEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+//                    var day:Int=SimpleDateFormat("dd").format(System.currentTimeMillis()).toInt()
+//                    var month:Int=SimpleDateFormat("MM").format(System.currentTimeMillis()).toInt()
+//                    var year:Int=SimpleDateFormat("yyyy").format(System.currentTimeMillis()).toInt()
+//                    Log.d(TAG, "data :${day}/${month}/${year} ")
+//                    SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis())
+
+
+                    Log.d(TAG, "data :${myCalander.time} ")
+                    Log.d(TAG, "in click edit text date data:${datePickerEditText.text} ")
+                    Log.d(TAG, "in click selected date data:${selectedDate} ")
 //                    viewModel.observeEntryList(selectedMachineId,selectedDate)
                     Log.d(TAG, "in button click")
                     val bundle = Bundle()
@@ -215,6 +233,9 @@ class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.O
                     bundle.putString("machineId", "${selectedMachineId}")
                     Navigation.findNavController(fragmentView)
                         .navigate(R.id.action_chartFragment_to_displayFragment, bundle)
+                    myCalander.time = Date(System.currentTimeMillis())
+                    datePickerEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(myCalander.time))
+                    selectedDate = SimpleDateFormat("MM/dd/yyyy").format(myCalander.time)
                 }
             }
         }

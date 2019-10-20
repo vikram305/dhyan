@@ -24,6 +24,8 @@ class DisplayChartViewModel @Inject constructor(
     }
 
     fun observeEntryList(machineId: Int, date: String): LiveData<Resource<List<ChartDM>>>? {
+
+        entries.value = Resource.loading(null)
 //        if(entries==null){
 //            entries= MediatorLiveData()
 //            entries!!.value= Resource.loading(null)

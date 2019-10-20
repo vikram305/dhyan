@@ -1,5 +1,6 @@
 package projects.vikky.com.dhyan.ui.main.chart
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -95,7 +96,7 @@ class DisplayChartFragment : DaggerFragment() {
 
                             } else {
                                 totalCountText.text =
-                                    "Machine Name: ${it.data!![0].machineName}, Total Count:${it.data!![it.data.size - 1].total_count}"
+                                    "Machine Name: ${it.data!![0].machineName},  Total Count:${it.data!![it.data.size - 1].total_count}"
                                 showErrorText(false)
                                 showChart(true)
                                 showMachineText(true)
@@ -143,7 +144,7 @@ class DisplayChartFragment : DaggerFragment() {
         }
         var barDataSet = BarDataSet(getData(data), "Count")
         barDataSet.setDrawValues(true)
-        barDataSet.color = R.color.colorAccent
+        barDataSet.setColor(Color.parseColor("#FB7577"))
         var barData: BarData = BarData(barDataSet)
         var xAxis: XAxis = horizontalBarChart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -217,7 +218,7 @@ class DisplayChartFragment : DaggerFragment() {
     private fun getData(entries: List<ChartDM>): ArrayList<BarEntry> {
         var barEntry: ArrayList<BarEntry> = ArrayList()
         for (i in 0..entries.size - 1) {
-            Log.d(TAG, "value of i :${i} and data ${entries.get(i).hour} ")
+//            Log.d(TAG, "value of i :${i} and data ${entries.get(i).hour} ")
             barEntry.add(BarEntry(i.toFloat(), entries[i].field0?.toFloat()!!))
 //            barEntry.add(BarEntry(entries[i].field0?.toFloat()!!,i.toFloat()))
         }

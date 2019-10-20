@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#546889</color>
 
+    <color name="chartColor">#FB7577</color>
 
     <color name="mtrl_textinput_default_box_stroke_color">#000</color>
     <color name="recyclerViewBackgroundColor">#B1B0B0</color>
