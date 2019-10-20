@@ -22,6 +22,7 @@ import projects.vikky.com.dhyan.models.chart.ChartDM
 import projects.vikky.com.dhyan.ui.main.Resource
 import projects.vikky.com.dhyan.viewmodels.ViewModelProviderFactory
 import javax.inject.Inject
+import kotlin.collections.maxBy as maxBy1
 
 class DisplayChartFragment : DaggerFragment() {
 
@@ -98,8 +99,8 @@ class DisplayChartFragment : DaggerFragment() {
                                 showErrorText(false)
                                 showChart(true)
                                 showMachineText(true)
-//                                initializeGraph(it.data!!)
-                                createGraph(it.data!!)
+                                initializeGraph(it.data!!)
+//                                createGraph(it.data!!)
                             }
 //                        initializeGraph(it.data!!)
 //                    entryRecyclerAdapter.setPosts(it.data!!)
@@ -129,6 +130,17 @@ class DisplayChartFragment : DaggerFragment() {
         for (i in 0..data.size - 1) {
             time.add("${data[i].hour}")
         }
+
+
+        var maxValueInData = data.maxBy1 { it.field0!! }!!.field0!!
+        var maxValue: Float = 0f
+        if (maxValueInData!! <= 10000) {
+            maxValue = maxValueInData!! + 1000f
+        } else if (maxValueInData!! <= 100000) {
+            maxValue = maxValueInData!! + 10000f
+        } else {
+            maxValue = maxValueInData + 0f
+        }
         var barDataSet = BarDataSet(getData(data), "Count")
         barDataSet.setDrawValues(true)
         barDataSet.color = R.color.colorAccent
@@ -139,9 +151,15 @@ class DisplayChartFragment : DaggerFragment() {
         var formatter: IndexAxisValueFormatter = IndexAxisValueFormatter(time)
         xAxis.granularity = 1f
         xAxis.valueFormatter = formatter
+        xAxis.setDrawGridLines(false)
         var yAxis = horizontalBarChart.axisRight
         yAxis.axisMaximum = 6000f
         yAxis.axisMaximum = 0f
+        horizontalBarChart.axisLeft.setDrawZeroLine(true)
+        horizontalBarChart.axisLeft.setLabelCount(6)
+        horizontalBarChart.axisLeft.axisMinimum = 0f
+        horizontalBarChart.axisLeft.axisMaximum = maxValue
+        horizontalBarChart.axisRight.isEnabled = false
 //        horizontalBarChart.xAxis.axisMinimum=0f
         horizontalBarChart.data = barData
         horizontalBarChart.setFitBars(true)
@@ -149,7 +167,7 @@ class DisplayChartFragment : DaggerFragment() {
         horizontalBarChart.animateXY(2000, 2000)
         horizontalBarChart.description.isEnabled = false
         horizontalBarChart.legend.isEnabled = false
-//        horizontalBarChart.setDrawValueAboveBar(true)
+        horizontalBarChart.setDrawValueAboveBar(true)
 
 //        horizontalBarChart.getAxisLeft().setEnabled(false);
 //        horizontalBarChart.getAxisRight().setEnabled(false);
@@ -177,6 +195,10 @@ class DisplayChartFragment : DaggerFragment() {
         var yAxis = horizontalBarChart.axisRight
         yAxis.setDrawLabels(false)
         yAxis.axisMinimum = 0f
+        var yAxisLeft = horizontalBarChart.axisLeft
+        yAxisLeft.setDrawZeroLine(false)
+
+
 
         horizontalBarChart.data = barData
         horizontalBarChart.setFitBars(false)
@@ -197,6 +219,7 @@ class DisplayChartFragment : DaggerFragment() {
         for (i in 0..entries.size - 1) {
             Log.d(TAG, "value of i :${i} and data ${entries.get(i).hour} ")
             barEntry.add(BarEntry(i.toFloat(), entries[i].field0?.toFloat()!!))
+//            barEntry.add(BarEntry(entries[i].field0?.toFloat()!!,i.toFloat()))
         }
 
 
