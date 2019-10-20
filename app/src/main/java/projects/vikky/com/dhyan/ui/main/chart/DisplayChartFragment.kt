@@ -9,7 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.github.mikephil.charting.charts.HorizontalBarChart
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -28,7 +28,8 @@ class DisplayChartFragment : DaggerFragment() {
     private val TAG: String = "DisplayChartFragment"
 
     private lateinit var viewModel: DisplayChartViewModel
-    private lateinit var horizontalBarChart: HorizontalBarChart
+    //    private lateinit var horizontalBarChart: HorizontalBarChart
+    private lateinit var horizontalBarChart: BarChart
     private lateinit var totalCountText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var errorTextView: TextView
@@ -93,11 +94,12 @@ class DisplayChartFragment : DaggerFragment() {
 
                             } else {
                                 totalCountText.text =
-                                    "Machine Name: ${it.data!![0].machineName}, Total Count:${it.data!![0].total_count}"
+                                    "Machine Name: ${it.data!![0].machineName}, Total Count:${it.data!![it.data.size - 1].total_count}"
                                 showErrorText(false)
                                 showChart(true)
                                 showMachineText(true)
-                                initializeGraph(it.data!!)
+//                                initializeGraph(it.data!!)
+                                createGraph(it.data!!)
                             }
 //                        initializeGraph(it.data!!)
 //                    entryRecyclerAdapter.setPosts(it.data!!)
@@ -137,18 +139,55 @@ class DisplayChartFragment : DaggerFragment() {
         var formatter: IndexAxisValueFormatter = IndexAxisValueFormatter(time)
         xAxis.granularity = 1f
         xAxis.valueFormatter = formatter
+        var yAxis = horizontalBarChart.axisRight
+        yAxis.axisMaximum = 6000f
+        yAxis.axisMaximum = 0f
 //        horizontalBarChart.xAxis.axisMinimum=0f
         horizontalBarChart.data = barData
         horizontalBarChart.setFitBars(true)
 
         horizontalBarChart.animateXY(2000, 2000)
-//        horizontalBarChart.setDrawValueAboveBar(false)
-
+        horizontalBarChart.description.isEnabled = false
+        horizontalBarChart.legend.isEnabled = false
+//        horizontalBarChart.setDrawValueAboveBar(true)
 
 //        horizontalBarChart.getAxisLeft().setEnabled(false);
 //        horizontalBarChart.getAxisRight().setEnabled(false);
         horizontalBarChart.invalidate()
 
+
+    }
+
+    private fun createGraph(data: List<ChartDM>) {
+
+        var time: ArrayList<String> = ArrayList()
+        for (i in 0..data.size - 1) {
+            time.add("${data[i].hour}")
+        }
+        var barDataSet = BarDataSet(getData(data), "Count")
+        barDataSet.setDrawValues(true)
+
+        var barData = BarData(barDataSet)
+        var xAxis: XAxis = horizontalBarChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.TOP
+        xAxis.labelCount = time.size
+        var formatter: IndexAxisValueFormatter = IndexAxisValueFormatter(time)
+        xAxis.granularity = 1f
+        xAxis.valueFormatter = formatter
+        var yAxis = horizontalBarChart.axisRight
+        yAxis.setDrawLabels(false)
+        yAxis.axisMinimum = 0f
+
+        horizontalBarChart.data = barData
+        horizontalBarChart.setFitBars(false)
+        horizontalBarChart.minimumWidth = 2
+
+        horizontalBarChart.animateXY(1000, 1000)
+        horizontalBarChart.description.isEnabled = false
+        horizontalBarChart.legend.isEnabled = false
+        horizontalBarChart.setDrawValueAboveBar(true)
+
+        horizontalBarChart.invalidate()
 
     }
 

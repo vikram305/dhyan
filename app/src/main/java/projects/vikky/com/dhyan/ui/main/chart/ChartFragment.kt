@@ -65,7 +65,10 @@ class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.O
         datePickerEditText = view.findViewById(R.id.datePickerEditText)
         findButton = view.findViewById(R.id.findButton)
         emptyTextView = view.findViewById(R.id.emptyText)
-        datePickerEditText.setText(SimpleDateFormat("MM/dd/yyyy").format(System.currentTimeMillis()))
+        datePickerEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+        Log.d(TAG, "data :${datePickerEditText.text} ");
+        selectedDate = SimpleDateFormat("MM/dd/yyyy").format(System.currentTimeMillis())
+
         findButton.setOnClickListener(this)
         findButton.isEnabled = false
 
@@ -91,8 +94,12 @@ class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.O
                 myCalander.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
                 val myFormat = "MM/dd/yyyy" // mention the format you need
-                val sdf = SimpleDateFormat(myFormat, Locale.US)
-                datePickerEditText.setText(sdf.format(myCalander.time))
+                val displayFormat = "dd/MM/yyyy"
+                val ddf = SimpleDateFormat(displayFormat)
+                val sdf = SimpleDateFormat(myFormat)
+                datePickerEditText.setText(ddf.format(myCalander.time))
+                selectedDate = sdf.format(myCalander.time)
+                Log.d(TAG, "data :${datePickerEditText.text} ");
             }
         datePickerEditText.setOnClickListener {
             DatePickerDialog(
@@ -198,7 +205,7 @@ class ChartFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View.O
 
         when (v?.id) {
             R.id.findButton -> {
-                selectedDate = datePickerEditText.text.toString()
+//                selectedDate = datePickerEditText.text.toString()
                 selectedMachineId = machineList[machineSpinner.selectedItemPosition].machineId!!
                 if (selectedMachineId != -1 && !TextUtils.isEmpty(selectedDate)) {
 //                    viewModel.observeEntryList(selectedMachineId,selectedDate)

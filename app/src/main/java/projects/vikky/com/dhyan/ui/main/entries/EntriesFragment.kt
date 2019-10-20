@@ -73,7 +73,9 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
         datePickerEditText = view.findViewById(R.id.datePickerEditText)
         findButton = view.findViewById(R.id.findButton)
         emptyTextView = view.findViewById(R.id.emptyText)
-        datePickerEditText.setText(SimpleDateFormat("MM/dd/yyyy").format(System.currentTimeMillis()))
+        datePickerEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+        Log.d(TAG, "data :${datePickerEditText.text} ");
+        selectedDate = SimpleDateFormat("MM/dd/yyyy").format(System.currentTimeMillis())
         findButton.setOnClickListener(this)
 
         machineSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -98,8 +100,12 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
                 myCalander.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
                 val myFormat = "MM/dd/yyyy" // mention the format you need
-                val sdf = SimpleDateFormat(myFormat, Locale.US)
-                datePickerEditText.setText(sdf.format(myCalander.time))
+                val displayFormat = "dd/MM/yyyy"
+                val ddf = SimpleDateFormat(displayFormat)
+                val sdf = SimpleDateFormat(myFormat)
+                datePickerEditText.setText(ddf.format(myCalander.time))
+                selectedDate = sdf.format(myCalander.time)
+                Log.d(TAG, "data :${datePickerEditText.text} ");
             }
         datePickerEditText.setOnClickListener {
             DatePickerDialog(
@@ -276,7 +282,7 @@ class EntriesFragment : DaggerFragment(), DatePicker.OnDateChangedListener, View
 
         when (view?.id) {
             R.id.findButton -> {
-                selectedDate = datePickerEditText.text.toString()
+//                selectedDate = datePickerEditText.text.toString()
                 if (machineList.isEmpty()) {
                     selectedMachineId = -1
                 } else {
