@@ -96,7 +96,7 @@ class DisplayChartFragment : DaggerFragment() {
 
                             } else {
                                 totalCountText.text =
-                                    "Machine Name: ${it.data!![0].machineName},  Total Count:${it.data!![it.data.size - 1].total_count}"
+                                    "Machine Name: ${it.data!![0].machineName}, Total Count: ${it.data!![it.data.size - 1].total_count}"
                                 showErrorText(false)
                                 showChart(true)
                                 showMachineText(true)
@@ -133,7 +133,9 @@ class DisplayChartFragment : DaggerFragment() {
         }
 
 
+//        data[0].field0=15000
         var maxValueInData = data.maxBy1 { it.field0!! }!!.field0!!
+
         var maxValue: Float = 0f
         if (maxValueInData!! <= 10000) {
             maxValue = maxValueInData!! + 1000f
@@ -145,6 +147,7 @@ class DisplayChartFragment : DaggerFragment() {
         var barDataSet = BarDataSet(getData(data), "Count")
         barDataSet.setDrawValues(true)
         barDataSet.setColor(Color.parseColor("#FB7577"))
+        barDataSet.valueTextSize = 14f
         var barData: BarData = BarData(barDataSet)
         var xAxis: XAxis = horizontalBarChart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
